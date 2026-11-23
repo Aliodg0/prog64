@@ -1,8 +1,8 @@
 use std::f32::consts::PI;
 
 use rand::Rng;
-use rand_distr::Uniform;
 use rand_distr::Distribution;
+use rand_distr::Uniform;
 
 use crate::{Environment, Score, State, pcgrng::PCGRng};
 
@@ -69,6 +69,9 @@ impl Environment for CartPole {
         let done_x = self.x < -self.threshold_x || self.x > self.threshold_x;
         let done_theta = self.theta < -self.threshold_theta || self.theta > self.threshold_theta;
         let done = done_x || done_theta || self.episode_length >= 500;
+
+        // Mémorise la fin de l'épisode => Ainsi lorsque l'épisode est terminé les prochains appels à step() ne feront plus évoluer le système avant un nouvel appel à reset()
+        self.episode_done = done;
 
         ([self.x, self.x_dot, self.theta, self.theta_dot], 1., done)
     }
